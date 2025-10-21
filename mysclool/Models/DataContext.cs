@@ -9,6 +9,7 @@ namespace mysclool.Models
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
+        public DbSet<AdminMenu> AdminMenus { get; set; }
         public DbSet<AdminUser> AdminUser { get; set; }
     }
 }

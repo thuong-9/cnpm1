@@ -275,3 +275,4 @@ e:\html\CNPM\cnpm1\mysclool\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.Workspace
 e:\html\CNPM\cnpm1\mysclool\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 e:\html\CNPM\cnpm1\mysclool\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 e:\html\CNPM\cnpm1\mysclool\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+E:\html\CNPM\cnpm1\mysclool\obj\Debug\net8.0\mysclool.sourcelink.json
