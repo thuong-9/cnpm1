@@ -1,0 +1,117 @@
+@using myschool.Areas.Admin.Models
+@using myschool.Models
+@model IList<AdminUser>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int stt = 1;
+
+    AdminUser? deleteUser = null;
+    if(ViewData["DeleteUser"] is AdminUser user)
+    {
+        deleteUser = user;
+    }
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>X tài khoản người dùng</h2>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="col-2 text-center">Mã tài khoản</th>
+                                    <th class="col-3 text-center">Tên người dùng</th>
+                                    <th class="col-4 text-center">Email</th>
+                                    <th class="col-2 text-center">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.UserID</td>
+                                            <td class="text-left">@item.UserName</td>
+                                            <td class="text-left">@item.Email</td>
+                                            <td class="text-center">
+                                                <a asp-area="Admin"
+                                                   asp-controller="Account"
+                                                   asp-action="Delete"
+                                                   asp-route-id="@item.UserID"
+                                                   class="btn btn-danger btn-sm"
+                                                   title="Xóa tài khoản">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Không có tài khoản nào để hiển thị
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* Modal xác nhận xóa *@
+@if (deleteUser != null)
+{
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa tài khoản</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa tài khoản này không?</p>
+                    <div class="form-group">
+                        <label>UserID:</label>
+                        <input type="text" class="form-control" value="@deleteUser.UserID" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>UserName:</label>
+                        <input type="text" class="form-control" value="@deleteUser.UserName" disabled />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-secondary " data-bs-dismiss="modal">
+                        <i class="bi bi-arrow-left-circle"></i> Go back
+                    </a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        <input type="hidden" name="UserID" value="@deleteUser.UserID" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Script tự động mở modal khi deleteUser != null *@
+    @section Scripts {
+        <script>
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        </script>
+    }
+}
+
+</main>

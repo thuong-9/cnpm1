@@ -1,0 +1,56 @@
+@using myschool.Areas.Admin.Models
+@using myschool.Models
+@model IList<AdminUser>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int stt = 1;
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>Danh sách tài khoản người dùng</h2>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="col-2 text-center">Mã tài khoản</th>
+                                    <th class="col-3 text-center">Tên người dùng</th>
+                                    <th class="col-4 text-center">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.UserID</td>
+                                            <td class="text-left">@item.UserName</td>
+                                            <td class="text-left">@item.Email</td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Không có tài khoản nào để hiển thị
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

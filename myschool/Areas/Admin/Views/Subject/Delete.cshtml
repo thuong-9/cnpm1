@@ -1,0 +1,115 @@
+@using myschool.Areas.Admin.Models
+@using myschool.Models
+@model IList<Subjects>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int stt = 1;
+
+    Subjects? deleteName = null;
+    if(ViewData["DeleteName"] is Subjects name)
+    {
+        deleteName = name;
+    }
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>Xóa môn học</h2>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="col-2 text-center">Mã môn học</th>
+                                    <th class="col-3 text-center">Tên môn học</th>
+                                    <th class="col-4 text-center">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.SubjectID</td>
+                                            <td class="text-left">@item.SubjectName</td>
+                                            <td class="text-center">
+                                                <a asp-area="Admin"
+                                                   asp-controller="Subject"
+                                                   asp-action="Delete"
+                                                   asp-route-id="@item.SubjectID"
+                                                   class="btn btn-danger btn-sm"
+                                                   title="Xóa môn học">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Không có môn học nào để hiển thị
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* Modal xác nhận xóa *@
+@if (deleteName != null)
+{
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa môn học</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa môn học này không?</p>
+                    <div class="form-group">
+                        <label>SubjectID:</label>
+                        <input type="text" class="form-control" value="@deleteName.SubjectID" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>SubjectName:</label>
+                        <input type="text" class="form-control" value="@deleteName.SubjectName" disabled />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-secondary " data-bs-dismiss="modal">
+                        <i class="bi bi-arrow-left-circle"></i> Quay lại<img src="" alt="">
+                    </a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        <input type="hidden" name="SubjectID" value="@deleteName.SubjectID" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Script tự động mở modal khi deleteUser != null *@
+    @section Scripts {
+        <script>
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        </script>
+    }
+}
+
+</main>
