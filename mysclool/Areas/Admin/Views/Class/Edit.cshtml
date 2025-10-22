@@ -1,0 +1,114 @@
+@using mysclool.Areas.Admin.Models
+@using mysclool.Models
+@model IList<Class>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int stt = 1;
+
+    Class? editName = null;
+    if (ViewData["EditName"] is Class name)
+    {
+        editName = name;
+    }
+}
+
+<main id="main" class="main">
+    <div class="pagetitle mb-3">
+        <h2>Sửa thông tin lớp học</h2>
+    </div>
+
+  <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="col-2 text-center">Mã lớp học</th>
+                                    <th class="col-3 text-center">Tên lớp học</th>
+                                    <th class="col-4 text-center">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.ClassID</td>
+                                            <td class="text-left">@item.ClassName</td>
+                                            <td class="text-center">
+                                                <a asp-area="Admin"
+                                                   asp-controller="Class"
+                                                   asp-action="Edit"
+                                                   asp-route-id="@item.ClassID"
+                                                   class="btn btn-primary btn-sm"
+                                                   title="Sửa lớp học">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Không có lớp nào để hiển thị
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* Modal chỉnh sửa *@
+    @if (editName != null)
+    {
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form asp-action="EditConfirmed" method="post">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="editModalLabel">Chỉnh sửa lớp học</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="ClassID" value="@editName.ClassID" />
+
+                            <div class="form-group mb-3">
+                                <label for="ClassName" class="form-label">Tên lớp học</label>
+                                <input type="text" name="ClassName" value="@editName.ClassName" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-arrow-left-circle"></i> Trở về
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @* Script tự động mở modal khi editUser != null *@
+        @section Scripts {
+            <script>
+                var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                editModal.show();
+            </script>
+        }
+    }
+</main>

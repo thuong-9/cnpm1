@@ -1,0 +1,133 @@
+@using mysclool.Areas.Admin.Models
+@using mysclool.Models
+@model IList<AdminUser>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int stt = 1;
+
+    AdminUser? editUser = null;
+    if (ViewData["EditUser"] is AdminUser user)
+    {
+        editUser = user;
+    }
+}
+
+<main id="main" class="main">
+    <div class="pagetitle mb-3">
+        <h2>Sửa tài khoản người dùng</h2>
+    </div>
+
+  <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="col-2 text-center">Mã tài khoản</th>
+                                    <th class="col-3 text-center">Tên người dùng</th>
+                                    <th class="col-4 text-center">Email</th>
+                                    <th class="col-4 text-center">Mật khẩu</th>
+                                    <th class="col-2 text-center">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.UserID</td>
+                                            <td class="text-left">@item.UserName</td>
+                                            <td class="text-left">@item.Email</td>
+                                            <td class="text-left">@item.Password</td>
+                                            <td class="text-center">
+                                                <a asp-area="Admin"
+                                                   asp-controller="Account"
+                                                   asp-action="Edit"
+                                                   asp-route-id="@item.UserID"
+                                                   class="btn btn-primary btn-sm"
+                                                   title="Sửa tài khoản">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Không có tài khoản nào để hiển thị
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* Modal chỉnh sửa *@
+    @if (editUser != null)
+    {
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form asp-action="EditConfirmed" method="post">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="editModalLabel">Chỉnh sửa tài khoản</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="UserID" value="@editUser.UserID" />
+
+                            <div class="form-group mb-3">
+                                <label for="UserName" class="form-label">Tên người dùng</label>
+                                <input type="text" name="UserName" value="@editUser.UserName" class="form-control" required />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="Email" class="form-label">Email</label>
+                                <input type="email" name="Email" value="@editUser.Email" class="form-control" required />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="Password" class="form-label">Mật khẩu</label>
+                                <input type="password" name="Password" value="@editUser.Password" class="form-control" required />
+                            </div>
+
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="IsActive" id="IsActive" value="true" @(editUser.IsActive ? "checked" : "") />
+                                <label class="form-check-label" for="IsActive">Hiển thị trên hệ thống</label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-arrow-left-circle"></i> Trở về
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @* Script tự động mở modal khi editUser != null *@
+        @section Scripts {
+            <script>
+                var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                editModal.show();
+            </script>
+        }
+    }
+</main>

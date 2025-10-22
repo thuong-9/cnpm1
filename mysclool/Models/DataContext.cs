@@ -11,5 +11,7 @@ namespace mysclool.Models
         }
         public DbSet<AdminMenu> AdminMenus { get; set; }
         public DbSet<AdminUser> AdminUser { get; set; }
+        public DbSet<Class> Classes { get; set; } 
+        public DbSet<Subjects> Subjects { get; set; }
     }
 }

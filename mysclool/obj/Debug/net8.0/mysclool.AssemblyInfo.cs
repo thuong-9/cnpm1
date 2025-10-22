@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("mysclool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+559b2e700270e3cdba7f1616619dababd2e35946")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+615e8b17bced7d62ccf3beeb51409c128122f121")]
 [assembly: System.Reflection.AssemblyProductAttribute("mysclool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("mysclool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -27,7 +27,7 @@ namespace mysclool.Utilities
         {
             using MD5 md5 = MD5.Create();
             md5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(text));
-            byte[] result = md5.Hash;
+            byte[] result = md5.Hash ?? Array.Empty<byte>();
             StringBuilder strBuilder = new StringBuilder();
             for (int i = 0; i < result.Length; i++)
                 strBuilder.Append(result[i].ToString("x2"));
@@ -35,7 +35,8 @@ namespace mysclool.Utilities
         }
         public static string MD5Password(string? text)
         {
-            string str = MD5Hash(text);
+            string safeText = text ?? string.Empty;
+            string str = MD5Hash(safeText);
             for (int i = 0; i < 5; i++)
                 str = MD5Hash(str + str);
             return str;
