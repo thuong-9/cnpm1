@@ -37,8 +37,14 @@
                     <ul id="@item.IdName" class="nav-content collapse" data-bs-parent="#sidebar-nav">
                         @foreach (var smn in sMenu)
                         {
+                            // Skip only DeleteMember as EditMember now supports no-id route
+                            if (smn.ActionName == "DeleteMember")
+                            {
+                                continue;
+                            }
+
                             <li>
-                                <a href="/@smn.AreaName/@smn.ControllerName/@smn.ActionName">
+                                <a asp-area="@smn.AreaName" asp-controller="@smn.ControllerName" asp-action="@smn.ActionName">
                                     <i class="bi bi-circle"></i>
                                     <span>@smn.ItemName</span>
                                 </a>

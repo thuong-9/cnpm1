@@ -1,0 +1,87 @@
+@model IEnumerable<myschool.Areas.Admin.Models.GroupMember>
+
+@{
+    ViewData["Title"] = "Danh sách thành viên nhóm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>Danh sách thành viên nhóm: @ViewBag.Group.GroupName</h2>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Danh sách thành viên</h5>
+                        <a asp-area="Admin"
+                           asp-controller="Group"
+                           asp-action="AddMember"
+                           asp-route-id="@ViewBag.GroupId"
+                           class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Thêm thành viên
+                        </a>
+                    </div>
+
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="col-4 text-left">Tài khoản</th>
+                                    <th class="col-2 text-center">Vai trò</th>
+                                    <th class="col-3 text-center">Ngày tham gia</th>
+                                    <th class="col-3 text-center">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-left">@item.User?.UserName</td>
+                                            <td class="text-center">@item.Role</td>
+                                            <td class="text-center">@item.JoinedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td class="text-center">
+                                                <a asp-area="Admin"
+                                                   asp-controller="Group"
+                                                   asp-action="EditMember"
+                                                   asp-route-id="@item.GroupMemberId"
+                                                   class="btn btn-sm btn-primary"
+                                                   title="Sửa">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form asp-area="Admin"
+                                                      asp-controller="Group"
+                                                      asp-action="DeleteMember"
+                                                      method="post"
+                                                      class="d-inline-block"
+                                                      onsubmit="return confirm('Bạn có chắc muốn xóa thành viên này?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@item.GroupMemberId" />
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">
+                                            Không có thành viên nào trong nhóm
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

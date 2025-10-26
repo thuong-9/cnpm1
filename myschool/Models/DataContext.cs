@@ -13,5 +13,7 @@ namespace myschool.Models
         public DbSet<AdminUser> AdminUser { get; set; }
         public DbSet<Class> Classes { get; set; } 
         public DbSet<Subjects> Subjects { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<GroupMember> GroupMembers { get; set; }
     }
 }

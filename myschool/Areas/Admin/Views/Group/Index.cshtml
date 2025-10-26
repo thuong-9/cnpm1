@@ -1,0 +1,84 @@
+@model IEnumerable<myschool.Areas.Admin.Models.Group>
+
+@{
+    ViewData["Title"] = "Danh sách nhóm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>Danh sách nhóm</h2>
+    </div>
+
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Danh sách nhóm</h5>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Tạo nhóm mới
+                        </a>
+                    </div>
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center col-2">Mã nhóm</th>
+                                    <th class="text-left col-6">Tên nhóm</th>
+                                    <th class="text-center col-4">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.GroupId</td>
+                                            <td class="text-left">@item.GroupName</td>
+                                            <td class="text-center">
+                                                <a asp-action="Members"
+                                                   asp-route-id="@item.GroupId"
+                                                   class="btn btn-info btn-sm"
+                                                   title="Thành viên">
+                                                    <i class="bi bi-person"></i>
+                                                </a>
+                                                <a asp-action="Edit"
+                                                   asp-route-id="@item.GroupId"
+                                                   class="btn btn-primary btn-sm"
+                                                   title="Sửa">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form asp-action="Delete"
+                                                      asp-route-id="@item.GroupId"
+                                                      method="post"
+                                                      class="d-inline-block"
+                                                      onsubmit="return confirm('Bạn có chắc muốn xóa nhóm này và tất cả thành viên?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit"
+                                                            class="btn btn-danger btn-sm"
+                                                            title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            Không có nhóm nào để hiển thị
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

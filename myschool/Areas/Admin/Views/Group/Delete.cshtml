@@ -1,0 +1,64 @@
+@model myschool.Areas.Admin.Models.GroupMember
+
+@{
+    ViewData["Title"] = "Xóa thành viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>Xóa thành viên</h2>
+    </div>
+
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-danger shadow-sm">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Xác nhận xóa thành viên khỏi nhóm
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="DeleteMember" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="GroupMemberId" />
+
+                            <div class="alert alert-warning">
+                                <p>
+                                    Bạn có chắc chắn muốn xóa thành viên 
+                                    <strong>@Model.User?.UserName</strong> 
+                                    khỏi nhóm <strong>@Model.Group?.GroupName</strong> không?
+                                </p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tên nhóm</label>
+                                <input type="text" class="form-control" value="@Model.Group?.GroupName" disabled />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tên thành viên</label>
+                                <input type="text" class="form-control" value="@Model.User?.UserName" disabled />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Vai trò</label>
+                                <input type="text" class="form-control" value="@Model.Role" disabled />
+                            </div>
+
+                            <div class="text-end">
+                                <a asp-action="Members" asp-route-id="@Model.GroupId" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left-circle"></i> Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

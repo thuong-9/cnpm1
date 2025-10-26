@@ -1,0 +1,129 @@
+@model myschool.Areas.Admin.Models.GroupMember
+
+@{
+    ViewData["Title"] = "Chỉnh sửa thành viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h2>Chỉnh sửa thành viên</h2>
+    </div>
+
+    <div class="container shadow p-5">
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form asp-action="EditMember" method="post">
+            <input type="hidden" asp-for="GroupMemberId" />
+            <div class="form-row">
+
+                @* Chọn nhóm *@
+                @if (ViewBag.Groups != null && ((IEnumerable<dynamic>)ViewBag.Groups).Any())
+                {
+                    <div class="form-group col-md-6 mb-3">
+                        <label>Nhóm <span class="text-danger">*</span></label>
+                        <select asp-for="GroupId" class="form-control">
+                            <option value="">-- Chọn nhóm --</option>
+                            @foreach (var g in ViewBag.Groups)
+                            {
+                                if (g.GroupId == Model.GroupId)
+                                {
+                                    <option value="@g.GroupId" selected="selected">@g.GroupName</option>
+                                }
+                                else
+                                {
+                                    <option value="@g.GroupId">@g.GroupName</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="GroupId" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="GroupId" />
+                }
+
+                @* Chọn thành viên *@
+                @if (ViewBag.Users != null && ((IEnumerable<dynamic>)ViewBag.Users).Any())
+                {
+                    <div class="form-group col-md-6 mb-3">
+                        <label>Thành viên <span class="text-danger">*</span></label>
+                        <select asp-for="UserId" class="form-control select2">
+                            <option value="">-- Chọn thành viên --</option>
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                if (user.UserID == Model.UserId)
+                                {
+                                    <option value="@user.UserID" selected="selected">@user.UserName</option>
+                                }
+                                else
+                                {
+                                    <option value="@user.UserID">@user.UserName</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="UserId" />
+                }
+
+                @* Vai trò *@
+                <div class="form-group col-md-6 mb-3">
+                    <label>Vai trò <span class="text-danger">*</span></label>
+                    <select asp-for="Role" class="form-control">
+                        <option value="Member">Thành viên</option>
+                        <option value="Admin">Quản trị viên</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <a asp-action="Members" asp-route-id="@Model.GroupId" class="btn btn-lg btn-warning p-2">
+                    <i class="bi bi-arrow-left-circle"></i> Quay lại
+                </a>
+
+                <button type="submit" class="btn btn-lg btn-primary p-2">
+                    <i class="bi bi-save-fill"></i> Lưu thay đổi
+                </button>
+
+                <form asp-action="DeleteMember" method="post" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa thành viên này?');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.GroupMemberId" />
+                    <button type="submit" class="btn btn-lg btn-danger p-2">
+                        <i class="bi bi-trash-fill"></i> Xóa
+                    </button>
+                </form>
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+    </script>
+}

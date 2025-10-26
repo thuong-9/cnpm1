@@ -25,9 +25,12 @@ namespace myschool.Areas.Admin.Controllers
         public IActionResult Index(AdminUser user)
         {
             if (user == null) return NotFound();
-            // Convert passwword to MD5
-            string pw = Functions.MD5Password(user.Password);
-            var check = _context.AdminUser.Where(u => (u.UserName == user.UserName) && (u.Password == pw)).FirstOrDefault();
+            // Convert password to MD5
+            string pw = Functions.MD5Password(user.Password ?? string.Empty);
+            var check = _context.AdminUser
+                .Select(u => new { u.UserID, u.UserName, u.Email, u.Password })
+                .FirstOrDefault(u => u.UserName == user.UserName && u.Password == pw);
+                
             if (check == null)
             {
                 Functions._Message = "Login failed. Please check your username and password.";
@@ -35,8 +38,8 @@ namespace myschool.Areas.Admin.Controllers
             }
             Functions._Message = string.Empty;
             Functions._UserID = check.UserID;
-            Functions._UserName = string.IsNullOrEmpty(check.UserName) ? string.Empty : check.UserName;
-            Functions._Email = string.IsNullOrEmpty(check.Email) ? string.Empty : check.Email;
+            Functions._UserName = check.UserName ?? string.Empty;
+            Functions._Email = check.Email ?? string.Empty;
             return RedirectToAction("Index", "Home");
         }
     }
