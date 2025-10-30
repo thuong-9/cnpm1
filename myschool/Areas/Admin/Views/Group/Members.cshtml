@@ -1,4 +1,5 @@
 @model IEnumerable<myschool.Areas.Admin.Models.GroupMember>
+@using myschool.Areas.Admin.Models
 
 @{
     ViewData["Title"] = "Danh sách thành viên nhóm";
@@ -53,18 +54,14 @@
                                                    title="Sửa">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <form asp-area="Admin"
-                                                      asp-controller="Group"
-                                                      asp-action="DeleteMember"
-                                                      method="post"
-                                                      class="d-inline-block"
-                                                      onsubmit="return confirm('Bạn có chắc muốn xóa thành viên này?');">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="id" value="@item.GroupMemberId" />
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <a asp-area="Admin"
+                                                   asp-controller="Group"
+                                                   asp-action="DeleteMember"
+                                                   asp-route-id="@item.GroupMemberId"
+                                                   class="btn btn-sm btn-danger"
+                                                   title="Xóa">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     }
@@ -85,3 +82,56 @@
         </div>
     </section>
 </main>
+@{
+    GroupMember? deleteMember = null;
+    if (ViewData["DeleteMember"] is GroupMember m)
+    {
+        deleteMember = m;
+    }
+}
+
+@if (deleteMember != null)
+{
+    <div class="modal fade" id="deleteMemberModal" tabindex="-1" aria-labelledby="deleteMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteMemberModalLabel">Xác nhận xóa thành viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa thành viên này khỏi nhóm?</p>
+                    <div class="form-group mb-2">
+                        <label>Nhóm:</label>
+                        <input type="text" class="form-control" value="@deleteMember.Group?.GroupName" disabled />
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Thành viên:</label>
+                        <input type="text" class="form-control" value="@deleteMember.User?.UserName" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>Vai trò:</label>
+                        <input type="text" class="form-control" value="@deleteMember.Role" disabled />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-arrow-left-circle"></i> Go back
+                    </a>
+                    <form asp-area="Admin" asp-controller="Group" asp-action="DeleteMember" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@deleteMember.GroupMemberId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            var modal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
+            modal.show();
+        </script>
+    }
+}

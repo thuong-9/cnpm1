@@ -25,6 +25,23 @@ namespace myschool.Areas.Admin.Controllers
             return View(groups);
         }
 
+        // GET: Admin/Group/Delete (show inline modal on Index)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            var list = await _context.Groups.ToListAsync();
+
+            Group? deleteGroup = null;
+            if (id.HasValue)
+            {
+                deleteGroup = await _context.Groups.FindAsync(id.Value);
+            }
+
+            ViewData["DeleteGroup"] = deleteGroup;
+            // Reuse Index view, which will show the modal when DeleteGroup is set
+            return View("Index", list);
+        }
+
         // GET: Admin/Group/Create
         public IActionResult Create()
         {
@@ -101,6 +118,36 @@ namespace myschool.Areas.Admin.Controllers
 
             var members = await query.ToListAsync();
             return View(members);
+        }
+
+        // GET: Admin/Group/DeleteMember (show inline modal on Members)
+        [HttpGet]
+        [ActionName("DeleteMember")]
+        public async Task<IActionResult> ConfirmDeleteMember(int id)
+        {
+            var member = await _context.GroupMembers
+                .Include(gm => gm.Group)
+                .Include(gm => gm.User)
+                .FirstOrDefaultAsync(gm => gm.GroupMemberId == id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            var gid = member.GroupId;
+            var members = await _context.GroupMembers
+                .Include(gm => gm.Group)
+                .Include(gm => gm.User)
+                .Where(gm => gm.GroupId == gid)
+                .OrderBy(gm => gm.User != null ? gm.User.UserName : string.Empty)
+                .ToListAsync();
+
+            ViewBag.Group = await _context.Groups.FindAsync(gid) ?? new Group { GroupName = "(Không rõ)" };
+            ViewBag.GroupId = gid;
+            ViewData["DeleteMember"] = member;
+
+            // Reuse Members view, which will show the modal when DeleteMember is set
+            return View("Members", members);
         }
 
         // GET: Admin/Group/AddMember

@@ -1,4 +1,5 @@
 @model IEnumerable<myschool.Areas.Admin.Models.Group>
+@using myschool.Areas.Admin.Models
 
 @{
     ViewData["Title"] = "Danh sách nhóm";
@@ -50,18 +51,12 @@
                                                    title="Sửa">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <form asp-action="Delete"
-                                                      asp-route-id="@item.GroupId"
-                                                      method="post"
-                                                      class="d-inline-block"
-                                                      onsubmit="return confirm('Bạn có chắc muốn xóa nhóm này và tất cả thành viên?');">
-                                                    @Html.AntiForgeryToken()
-                                                    <button type="submit"
-                                                            class="btn btn-danger btn-sm"
-                                                            title="Xóa">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <a asp-action="Delete"
+                                                   asp-route-id="@item.GroupId"
+                                                   class="btn btn-danger btn-sm"
+                                                   title="Xóa">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     }
@@ -82,3 +77,53 @@
         </div>
     </section>
 </main>
+
+@{
+    Group? deleteGroup = null;
+    if (ViewData["DeleteGroup"] is Group g)
+    {
+        deleteGroup = g;
+    }
+}
+
+@if (deleteGroup != null)
+{
+    <div class="modal fade" id="deleteGroupModal" tabindex="-1" aria-labelledby="deleteGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteGroupModalLabel">Xác nhận xóa nhóm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa nhóm này không?</p>
+                    <div class="form-group mb-2">
+                        <label>Mã nhóm:</label>
+                        <input type="text" class="form-control" value="@deleteGroup.GroupId" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>Tên nhóm:</label>
+                        <input type="text" class="form-control" value="@deleteGroup.GroupName" disabled />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-arrow-left-circle"></i> Go back
+                    </a>
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@deleteGroup.GroupId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            var modal = new bootstrap.Modal(document.getElementById('deleteGroupModal'));
+            modal.show();
+        </script>
+    }
+}
