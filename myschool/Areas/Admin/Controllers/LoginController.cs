@@ -22,12 +22,12 @@ namespace myschool.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Index(AdminUser user)
+        public IActionResult Index(tblAdminUser user)
         {
             if (user == null) return NotFound();
             // Convert password to MD5
             string pw = Functions.MD5Password(user.Password ?? string.Empty);
-            var check = _context.AdminUser
+            var check = _context.AdminUsers
                 .Select(u => new { u.UserID, u.UserName, u.Email, u.Password })
                 .FirstOrDefault(u => u.UserName == user.UserName && u.Password == pw);
                 

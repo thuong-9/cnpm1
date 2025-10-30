@@ -21,7 +21,7 @@ namespace myschool.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("myschool.Areas.Admin.Models.AdminUser", b =>
+            modelBuilder.Entity("myschool.Areas.Admin.Models.tblAdminUser", b =>
                 {
                     b.Property<int>("UserID")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace myschool.Migrations
 
                     b.HasKey("UserID");
 
-                    b.ToTable("AdminUser");
+                    b.ToTable("tblAdminUser");
                 });
 #pragma warning restore 612, 618
         }

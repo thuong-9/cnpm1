@@ -10,9 +10,9 @@ namespace myschool.Models
         {
         }
         public DbSet<AdminMenu> AdminMenus { get; set; }
-        public DbSet<AdminUser> AdminUser { get; set; }
-        public DbSet<Class> Classes { get; set; } 
-        public DbSet<Subjects> Subjects { get; set; }
+        public DbSet<tblAdminUser> AdminUsers { get; set; }
+        public DbSet<tblClass> Classes { get; set; } 
+        public DbSet<tblSubjects> Subjects { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupMember> GroupMembers { get; set; }
     }

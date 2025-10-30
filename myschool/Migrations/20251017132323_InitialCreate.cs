@@ -11,7 +11,7 @@ namespace myschool.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AdminUser",
+                name: "tblAdminUser",
                 columns: table => new
                 {
                     UserID = table.Column<int>(type: "int", nullable: false)
@@ -23,7 +23,7 @@ namespace myschool.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdminUser", x => x.UserID);
+                    table.PrimaryKey("PK_tblAdminUser", x => x.UserID);
                 });
         }
 
@@ -31,7 +31,7 @@ namespace myschool.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AdminUser");
+                name: "tblAdminUser");
         }
     }
 }

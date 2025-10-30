@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace myschool.Areas.Admin.Models
 {
     [Table("Subjects")]
-    public class Subjects
+    public class tblSubjects
     {
         [Key]
         public int SubjectID { get; set; }

@@ -23,7 +23,7 @@ namespace myschool.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(AdminUser auser)
+        public async Task<IActionResult> Index(tblAdminUser auser)
         {
             _logger.LogInformation("Register POST called");
             if (auser == null)
@@ -66,7 +66,7 @@ namespace myschool.Areas.Admin.Controllers
             }
 
             // Check the duplicate username before registering
-            var check = _context.AdminUser.Where(u => u.UserName == auser.UserName).FirstOrDefault();
+            var check = _context.AdminUsers.Where(u => u.UserName == auser.UserName).FirstOrDefault();
             if (check != null) //Already exists this username
             {
                 Functions._Message = "Username already exists";
@@ -76,7 +76,7 @@ namespace myschool.Areas.Admin.Controllers
             //If username does not exist
             Functions._Message = string.Empty;
             auser.Password = Functions.MD5Password(auser.Password);
-            _context.AdminUser.Add(auser);
+            _context.AdminUsers.Add(auser);
             await _context.SaveChangesAsync();
             _logger.LogInformation("User saved: {UserName} (id={Id})", auser.UserName, auser.UserID);
             return RedirectToAction("Index", "Login");

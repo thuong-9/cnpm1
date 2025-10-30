@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace myschool.Areas.Admin.Models
 {
-    [Table("AdminUser")]
-    public class AdminUser
+    [Table("tblAdminUser")]
+    public class tblAdminUser
     {
         [Key]
         public int UserID { get; set; }

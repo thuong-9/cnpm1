@@ -1,13 +1,13 @@
 @using myschool.Areas.Admin.Models
 @using myschool.Models
-@model IList<AdminUser>
+@model IList<tblAdminUser>
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     int stt = 1;
 
-    AdminUser? editUser = null;
-    if (ViewData["EditUser"] is AdminUser user)
+    tblAdminUser? editUser = null;
+    if (ViewData["EditUser"] is tblAdminUser user)
     {
         editUser = user;
     }

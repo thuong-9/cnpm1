@@ -1,13 +1,13 @@
 @using myschool.Areas.Admin.Models
 @using myschool.Models
-@model IList<Subjects>
+@model IList<tblSubjects>
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     int stt = 1;
 
-    Subjects? deleteName = null;
-    if(ViewData["DeleteName"] is Subjects name)
+    tblSubjects? deleteName = null;
+    if(ViewData["DeleteName"] is tblSubjects name)
     {
         deleteName = name;
     }

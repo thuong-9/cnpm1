@@ -1,13 +1,13 @@
 @using myschool.Areas.Admin.Models
 @using myschool.Models
-@model IList<AdminUser>
+@model IList<tblAdminUser>
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     int stt = 1;
 
-    AdminUser? deleteUser = null;
-    if(ViewData["DeleteUser"] is AdminUser user)
+    tblAdminUser? deleteUser = null;
+    if(ViewData["DeleteUser"] is tblAdminUser user)
     {
         deleteUser = user;
     }

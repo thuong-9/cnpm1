@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace myschool.Areas.Admin.Models
 {
     [Table("Class")]
-    public class Class
+    public class tblClass
     {
         [Key]
         public int ClassID { get; set; }

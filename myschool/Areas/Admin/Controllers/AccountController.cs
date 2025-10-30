@@ -23,7 +23,7 @@ namespace myschool.Areas.Admin.Controllers
         public IActionResult Index()
         {
             // Lấy danh sách tài khoản từ bảng Account, sắp xếp theo UserID
-            var mnList = _context.AdminUser.OrderBy(m => m.UserID).ToList();
+            var mnList = _context.AdminUsers.OrderBy(m => m.UserID).ToList();
             // Gửi danh sách sang View để hiển thị
             return View(mnList);
         }
@@ -32,12 +32,12 @@ namespace myschool.Areas.Admin.Controllers
         // Hiển thị danh sách tài khoản
         public IActionResult Delete(int? id)
         {
-            var mnList = _context.AdminUser.OrderBy(m => m.UserID).ToList();
+            var mnList = _context.AdminUsers.OrderBy(m => m.UserID).ToList();
 
-            AdminUser? deleteUser = null;
+            tblAdminUser? deleteUser = null;
             if (id != null)
             {
-                deleteUser = _context.AdminUser.Find(id);
+                deleteUser = _context.AdminUsers.Find(id);
             }
 
             ViewData["DeleteUser"] = deleteUser;
@@ -49,10 +49,10 @@ namespace myschool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int UserID)
         {
-            var delUser = _context.AdminUser.Find(UserID);
+            var delUser = _context.AdminUsers.Find(UserID);
             if (delUser != null)
             {
-                _context.AdminUser.Remove(delUser);
+                _context.AdminUsers.Remove(delUser);
                 _context.SaveChanges();
             }
 
@@ -61,14 +61,14 @@ namespace myschool.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            var model = new AdminUser(); // khởi tạo model mới
+            var model = new tblAdminUser(); // khởi tạo model mới
             return View(model);
         }
 
         // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(AdminUser model)
+        public IActionResult Create(tblAdminUser model)
         {
             if (!ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace myschool.Areas.Admin.Controllers
 
             try
             {
-                _context.AdminUser.Add(model);
+                _context.AdminUsers.Add(model);
                 _context.SaveChanges();
                 TempData["SuccessMessage"] = "Tài khoản đã được tạo thành công!";
                 return RedirectToAction("Create"); // trở lại trang tạo mới
@@ -93,19 +93,19 @@ namespace myschool.Areas.Admin.Controllers
         [HttpGet]
          public IActionResult Edit(int id)
         {
-            var user = _context.AdminUser.FirstOrDefault(x => x.UserID == id);
+            var user = _context.AdminUsers.FirstOrDefault(x => x.UserID == id);
             if (user != null)
             {
                 ViewData["EditUser"] = user;
             }
-            var list = _context.AdminUser.ToList();
+            var list = _context.AdminUsers.ToList();
             return View(list);
         }
 
         [HttpPost]
-        public IActionResult EditConfirmed(AdminUser model)
+        public IActionResult EditConfirmed(tblAdminUser model)
         {
-            var user = _context.AdminUser.FirstOrDefault(x => x.UserID == model.UserID);
+            var user = _context.AdminUsers.FirstOrDefault(x => x.UserID == model.UserID);
             if (user != null)
             {
                 user.UserName = model.UserName;

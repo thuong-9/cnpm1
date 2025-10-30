@@ -1,101 +1,151 @@
 @model myschool.Areas.Admin.Models.GroupMember
 
 @{
-    ViewData["Title"] = "Thêm thành viên";
+    ViewData["Title"] = "Quản lý thành viên nhóm";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int? selectedGroupId = ViewBag.SelectedGroupId as int?;
+    var groups = ViewBag.Groups as IEnumerable<dynamic>;
+    var users = ViewBag.Users as IEnumerable<dynamic>;
+    var members = ViewBag.Members as IEnumerable<myschool.Areas.Admin.Models.GroupMember>;
 }
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h2>Thêm thành viên</h2>
+        <h2>Thêm thành viên nhóm</h2>
     </div>
 
-    <div class="container shadow p-5">
-
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        <form asp-action="AddMember" method="post">
-            <div class="form-row">
-
-                @if (ViewBag.Groups != null && ((IEnumerable<dynamic>)ViewBag.Groups).Any())
-                {
-                    <div class="form-group col-md-6 mb-3">
-                        <label>Nhóm <span class="text-danger">*</span></label>
-                        <select asp-for="GroupId" class="form-control">
-                            <option value="">-- Chọn nhóm --</option>
-                            @foreach (var g in ViewBag.Groups)
-                            {
-                                if (g.GroupId == Model.GroupId)
-                                {
-                                    <option value="@g.GroupId" selected="selected">@g.GroupName</option>
-                                }
-                                else
-                                {
-                                    <option value="@g.GroupId">@g.GroupName</option>
-                                }
-                            }
-                        </select>
-                        <span asp-validation-for="GroupId" class="text-danger"></span>
+    <section>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Chọn nhóm để thêm thành viên</h5>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-list"></i> Danh sách nhóm
+                        </a>
+                    </div>s
+                    <div class="card-body">
+                        <form method="get" asp-action="AddMember" class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label">Nhập tên nhóm</label>
+                                <input type="text" name="groupName" list="groupNameList" class="form-control" placeholder="Nhập tên nhóm" value="@ViewBag.SelectedGroupName">
+                                <datalist id="groupNameList">
+                                    @if (groups != null)
+                                    {
+                                        foreach (var g in groups)
+                                        {
+                                            <option value="@g.GroupName"></option>
+                                        }
+                                    }
+                                </datalist>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Chọn nhóm
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                }
-                else
-                {
-                    <input type="hidden" asp-for="GroupId" />
-                }
-
-                <div class="form-group col-md-6 mb-3">
-                    <label>Thành viên <span class="text-danger">*</span></label>
-                    <select asp-for="UserId" class="form-control select2">
-                        <option value="">-- Chọn thành viên --</option>
-                        @foreach (var user in ViewBag.Users)
-                        {
-                            <option value="@user.UserID">@user.UserName</option>
-                        }
-                    </select>
-                    <span asp-validation-for="UserId" class="text-danger"></span>
                 </div>
-
-                <div class="form-group col-md-6 mb-3">
-                    <label>Vai trò <span class="text-danger">*</span></label>
-                    <select asp-for="Role" class="form-control">
-                        <option value="Member">Thành viên</option>
-                        <option value="Admin">Quản trị viên</option>
-                    </select>
-                    <span asp-validation-for="Role" class="text-danger"></span>
-                </div>
-
             </div>
+        </div>
 
-            <a asp-action="Members" asp-route-id="@Model.GroupId" class="btn btn-lg btn-warning p-2">
-                <i class="bi bi-arrow-left-circle"></i> Quay lại
-            </a>
+        @if (selectedGroupId.HasValue)
+        {
+             <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0"><i class="bi bi-person-plus-fill"></i> Thêm thành viên vào nhóm</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (TempData["SuccessMessage"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                            @if (TempData["ErrorMessage"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
 
-            <button type="submit" class="btn btn-lg btn-primary p-2">
-                <i class="bi bi-person-plus-fill"></i> Thêm thành viên
-            </button>
-        </form>
-    </div>
+                            <form asp-action="AddMember" method="post" class="row g-3">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" asp-for="GroupId" value="@selectedGroupId" />
+                                <div class="col-12">
+                                    <label class="form-label">Nhóm</label>
+                                    <input type="text" class="form-control" value="@ViewBag.SelectedGroupName" readonly />
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Thành viên <span class="text-danger">*</span></label>
+                                    <select asp-for="UserId" class="form-select select2" data-placeholder="Nhập thành viên">
+                                        <option value="">Nhập thành viên</option>
+                                        @if (users != null)
+                                        {
+                                            foreach (var u in users)
+                                            {
+                                                <option value="@u.UserID">@u.UserName</option>
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="UserId" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Vai trò <span class="text-danger">*</span></label>
+                                    <select asp-for="Role" class="form-select">
+                                        <option value="Member">Thành viên</option>
+                                        <option value="Admin">Quản trị viên</option>
+                                    </select>
+                                    <span asp-validation-for="Role" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-12 text-end">
+                                    <a asp-action="Members" asp-route-id="@selectedGroupId" class="btn btn-outline-secondary">
+                                        <i class="bi bi-arrow-left-circle"></i> Quay lại danh sách
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-person-plus-fill"></i> Thêm thành viên
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Vui lòng chọn một nhóm để xem danh sách thành viên và thêm thành viên mới.
+                    </div>
+                </div>
+            </div>
+        }
+    </section>
 </main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         $(document).ready(function () {
-            $('.select2').select2();
+            $('.select2').each(function () {
+                var placeholder = $(this).data('placeholder') || '';
+                $(this).select2({
+                    width: '100%',
+                    allowClear: true,
+                    placeholder: placeholder
+                });
+            });
         });
     </script>
 }

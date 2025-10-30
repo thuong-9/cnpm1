@@ -44,7 +44,7 @@ namespace myschool.Areas.Admin.Controllers
                 int createdBy = 0;
                 if (User?.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name))
                 {
-                    var currentUser = await _context.AdminUser.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                    var currentUser = await _context.AdminUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                     if (currentUser != null)
                     {
                         createdBy = currentUser.UserID;
@@ -54,7 +54,7 @@ namespace myschool.Areas.Admin.Controllers
                 // Fallback: use any existing admin user as creator to satisfy FK constraint
                 if (createdBy == 0)
                 {
-                    var anyAdmin = await _context.AdminUser.FirstOrDefaultAsync();
+                    var anyAdmin = await _context.AdminUsers.FirstOrDefaultAsync();
                     if (anyAdmin != null)
                     {
                         createdBy = anyAdmin.UserID;
@@ -104,16 +104,56 @@ namespace myschool.Areas.Admin.Controllers
         }
 
         // GET: Admin/Group/AddMember
-        public async Task<IActionResult> AddMember()
+        public async Task<IActionResult> AddMember(int? id, string? groupName)
         {
-            ViewBag.Users = await _context.AdminUser
+            // Dropdown sources
+            ViewBag.Users = await _context.AdminUsers
                 .Select(u => new { u.UserID, u.UserName })
                 .ToListAsync();
             ViewBag.Groups = await _context.Groups
                 .Select(g => new { g.GroupId, g.GroupName })
                 .ToListAsync();
 
-            return View(new GroupMember());
+            // Resolve group by name if provided
+            if (!id.HasValue && !string.IsNullOrWhiteSpace(groupName))
+            {
+                var key = groupName.Trim().ToLowerInvariant();
+                var g = await _context.Groups
+                    .Where(x => x.GroupName != null && x.GroupName.ToLower() == key)
+                    .Select(x => new { x.GroupId, x.GroupName })
+                    .FirstOrDefaultAsync();
+                if (g != null)
+                {
+                    id = g.GroupId;
+                    ViewBag.SelectedGroupName = g.GroupName;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy nhóm theo tên đã nhập.";
+                }
+            }
+
+            // If a group is selected, load its members to display on the same page
+            if (id.HasValue)
+            {
+                var members = await _context.GroupMembers
+                    .Include(gm => gm.Group)
+                    .Include(gm => gm.User)
+                    .Where(gm => gm.GroupId == id.Value)
+                    .OrderBy(gm => gm.User != null ? gm.User.UserName : string.Empty)
+                    .ToListAsync();
+
+                ViewBag.Members = members;
+                ViewBag.SelectedGroupId = id.Value;
+                if (ViewBag.SelectedGroupName == null)
+                {
+                    var gname = await _context.Groups.Where(g => g.GroupId == id.Value).Select(g => g.GroupName).FirstOrDefaultAsync();
+                    ViewBag.SelectedGroupName = gname;
+                }
+            }
+
+            // Preselect the chosen group in the form
+            return View(new GroupMember { GroupId = id ?? 0 });
         }
 
         // POST: Admin/Group/AddMember
@@ -123,49 +163,122 @@ namespace myschool.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Prevent duplicate membership
+                var exists = await _context.GroupMembers
+                    .AnyAsync(gm => gm.GroupId == groupMember.GroupId && gm.UserId == groupMember.UserId);
+                if (exists)
+                {
+                    TempData["ErrorMessage"] = "Thành viên đã tồn tại trong nhóm này.";
+                    return RedirectToAction(nameof(AddMember), new { id = groupMember.GroupId });
+                }
+
                 groupMember.JoinedDate = DateTime.Now;
                 _context.Add(groupMember);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Members), new { id = groupMember.GroupId });
+                TempData["SuccessMessage"] = "Đã thêm thành viên vào nhóm thành công.";
+                // Stay on AddMember page and keep the selected group context
+                return RedirectToAction(nameof(AddMember), new { id = groupMember.GroupId });
             }
-            ViewBag.Users = await _context.AdminUser
+            ViewBag.Users = await _context.AdminUsers
                 .Select(u => new { u.UserID, u.UserName })
                 .ToListAsync();
             ViewBag.Groups = await _context.Groups
                 .Select(g => new { g.GroupId, g.GroupName })
                 .ToListAsync();
+            // When validation fails, also reload current members for the selected group
+            if (groupMember.GroupId > 0)
+            {
+                var members = await _context.GroupMembers
+                    .Include(gm => gm.Group)
+                    .Include(gm => gm.User)
+                    .Where(gm => gm.GroupId == groupMember.GroupId)
+                    .OrderBy(gm => gm.User != null ? gm.User.UserName : string.Empty)
+                    .ToListAsync();
+                ViewBag.Members = members;
+                ViewBag.SelectedGroupId = groupMember.GroupId;
+            }
+
             return View(groupMember);
         }
 
         // GET: Admin/Group/EditMember
-        public async Task<IActionResult> EditMember(int? id = null)
+        public async Task<IActionResult> EditMember(int? id = null, int? groupId = null, string? groupName = null)
         {
             // Load all users and groups for dropdowns regardless of context
-            ViewBag.Users = await _context.AdminUser
+            ViewBag.Users = await _context.AdminUsers
                 .Select(u => new { u.UserID, u.UserName })
                 .ToListAsync();
             ViewBag.Groups = await _context.Groups
                 .Select(g => new { g.GroupId, g.GroupName })
                 .ToListAsync();
 
-            // If no ID provided, return an empty form for new member
-            if (id == null)
+            // Resolve group by name if provided and groupId not given
+            if (!groupId.HasValue && !string.IsNullOrWhiteSpace(groupName))
             {
-                return View(new GroupMember());
+                var key = groupName.Trim().ToLowerInvariant();
+                var g = await _context.Groups
+                    .Where(x => x.GroupName != null && x.GroupName.ToLower() == key)
+                    .Select(x => new { x.GroupId, x.GroupName })
+                    .FirstOrDefaultAsync();
+                if (g != null)
+                {
+                    groupId = g.GroupId;
+                    ViewBag.SelectedGroupName = g.GroupName;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy nhóm theo tên đã nhập.";
+                }
             }
 
-            // Try to find the member if ID is provided
-            var groupMember = await _context.GroupMembers
-                .Include(gm => gm.Group)
-                .Include(gm => gm.User)
-                .FirstOrDefaultAsync(m => m.GroupMemberId == id.Value);
-
-            if (groupMember == null)
+            // If editing a specific member (id provided)
+            if (id.HasValue)
             {
-                return NotFound();
+                var groupMember = await _context.GroupMembers
+                    .Include(gm => gm.Group)
+                    .Include(gm => gm.User)
+                    .FirstOrDefaultAsync(m => m.GroupMemberId == id.Value);
+
+                if (groupMember == null)
+                {
+                    return NotFound();
+                }
+
+                // Also load list for the member's group to show context
+                var gid = groupMember.GroupId;
+                var members = await _context.GroupMembers
+                    .Include(gm => gm.Group)
+                    .Include(gm => gm.User)
+                    .Where(gm => gm.GroupId == gid)
+                    .OrderBy(gm => gm.User != null ? gm.User.UserName : string.Empty)
+                    .ToListAsync();
+                ViewBag.Members = members;
+                ViewBag.SelectedGroupId = gid;
+                ViewBag.SelectedGroupName = await _context.Groups.Where(g => g.GroupId == gid).Select(g => g.GroupName).FirstOrDefaultAsync();
+
+                return View(groupMember);
             }
 
-            return View(groupMember);
+            // If group is selected by id (or by name above), show an empty form bound to that group and list members
+            if (groupId.HasValue)
+            {
+                var members = await _context.GroupMembers
+                    .Include(gm => gm.Group)
+                    .Include(gm => gm.User)
+                    .Where(gm => gm.GroupId == groupId.Value)
+                    .OrderBy(gm => gm.User != null ? gm.User.UserName : string.Empty)
+                    .ToListAsync();
+                ViewBag.Members = members;
+                ViewBag.SelectedGroupId = groupId.Value;
+                if (ViewBag.SelectedGroupName == null)
+                {
+                    ViewBag.SelectedGroupName = await _context.Groups.Where(g => g.GroupId == groupId.Value).Select(g => g.GroupName).FirstOrDefaultAsync();
+                }
+                return View(new GroupMember { GroupId = groupId.Value });
+            }
+
+            // No selection -> empty page with hint
+            return View(new GroupMember());
         }
 
         // GET: Admin/Group/Edit/5
@@ -240,10 +353,18 @@ namespace myschool.Areas.Admin.Controllers
                     }
                     else
                     {
-                        // Adding new member
+                        // Adding new member (avoid duplicate)
+                        var exists = await _context.GroupMembers
+                            .AnyAsync(gm => gm.GroupId == groupMember.GroupId && gm.UserId == groupMember.UserId);
+                        if (exists)
+                        {
+                            TempData["ErrorMessage"] = "Thành viên đã tồn tại trong nhóm này.";
+                            return RedirectToAction(nameof(AddMember), new { id = groupMember.GroupId });
+                        }
                         groupMember.JoinedDate = DateTime.Now;
                         _context.Add(groupMember);
                         await _context.SaveChangesAsync();
+                        TempData["SuccessMessage"] = "Đã thêm thành viên vào nhóm thành công.";
                     }
                 }
                 catch (DbUpdateConcurrencyException)

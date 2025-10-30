@@ -28,14 +28,14 @@ namespace myschool.Areas.Admin.Controllers
         }
         public IActionResult Create()
         {
-            var model = new Subjects(); // khởi tạo model mới
+            var model = new tblSubjects(); // khởi tạo model mới
             return View(model);
         }
 
         // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Subjects model)
+        public IActionResult Create(tblSubjects model)
         {
             if (!ModelState.IsValid)
             {
@@ -62,7 +62,7 @@ namespace myschool.Areas.Admin.Controllers
         {
             var mnList = _context.Subjects.OrderBy(m => m.SubjectID).ToList();
 
-            Subjects? deleteName = null;
+            tblSubjects? deleteName = null;
             if (id != null)
             {
                 deleteName = _context.Subjects.Find(id);
@@ -99,7 +99,7 @@ namespace myschool.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditConfirmed(Subjects model)
+        public IActionResult EditConfirmed(tblSubjects model)
         {
             var name = _context.Subjects.FirstOrDefault(x => x.SubjectID == model.SubjectID);
             if (name != null)

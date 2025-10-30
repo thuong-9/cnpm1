@@ -1,5 +1,7 @@
 E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\appsettings.Development.json
 E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\appsettings.json
+E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\notes.json
+E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\tasks.json
 E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\myschool.staticwebassets.runtime.json
 E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\myschool.exe
 E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\myschool.deps.json
@@ -276,5 +278,3 @@ E:\html\CNPM\cnpm1\myschool\obj\Debug\net8.0\refint\myschool.dll
 E:\html\CNPM\cnpm1\myschool\obj\Debug\net8.0\myschool.pdb
 E:\html\CNPM\cnpm1\myschool\obj\Debug\net8.0\myschool.genruntimeconfig.cache
 E:\html\CNPM\cnpm1\myschool\obj\Debug\net8.0\ref\myschool.dll
-E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\notes.json
-E:\html\CNPM\cnpm1\myschool\bin\Debug\net8.0\tasks.json

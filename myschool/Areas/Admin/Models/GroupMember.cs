@@ -21,6 +21,6 @@ namespace myschool.Areas.Admin.Models
 
         // Navigation property
         public virtual Group? Group { get; set; }
-        public virtual AdminUser? User { get; set; }
+        public virtual tblAdminUser? User { get; set; }
     }
 }
